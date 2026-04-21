@@ -17,14 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EntryServiceImpl implements EntryService {
 
-    private final EntryRepository repository;
+    private final EntryRepository entryRepository;
 
     @Override
     public EntryResponseDTO createEntry(Long userId, EntryRequestDTO request) {
 
         Entry entry = Entry.builder().userId(userId).title(request.getTitle()).category(request.getCategory()).timeSpent(request.getTimeSpent()).createdAt(LocalDateTime.now()).build();
 
-        Entry saved = repository.save(entry);
+        Entry saved = entryRepository.save(entry);
 
         return mapToDTO(saved);
     }
@@ -35,7 +35,7 @@ public class EntryServiceImpl implements EntryService {
         LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
 
-        return repository.findByUserIdAndCreatedAtBetween(userId, start, end).stream().map(this::mapToDTO).toList();
+        return entryRepository.findByUserIdAndCreatedAtBetween(userId, start, end).stream().map(this::mapToDTO).toList();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class EntryServiceImpl implements EntryService {
         LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime end = LocalDate.now().atTime(LocalTime.MAX);
 
-        return repository.findByUserIdAndCreatedAtBetween(userId, start, end);
+        return entryRepository.findByUserIdAndCreatedAtBetween(userId, start, end);
     }
 
     private String getTopCategory(List<Entry> entries) {
@@ -73,8 +73,7 @@ public class EntryServiceImpl implements EntryService {
     @Override
     public EntryResponseDTO updateEntry(Long userId, Long entryId, EntryRequestDTO request) {
 
-        Entry entry = repository.findById(entryId)
-                .orElseThrow(() -> new RuntimeException("Entry not found"));
+        Entry entry = entryRepository.findById(entryId).orElseThrow(() -> new RuntimeException("Entry not found"));
 
         // 🔒 Security check (important)
         if (!entry.getUserId().equals(userId)) {
@@ -85,7 +84,7 @@ public class EntryServiceImpl implements EntryService {
         entry.setCategory(request.getCategory());
         entry.setTimeSpent(request.getTimeSpent());
 
-        Entry updated = repository.save(entry);
+        Entry updated = entryRepository.save(entry);
 
         return mapToDTO(updated);
     }
@@ -93,15 +92,14 @@ public class EntryServiceImpl implements EntryService {
     @Override
     public void deleteEntry(Long userId, Long entryId) {
 
-        Entry entry = repository.findById(entryId)
-                .orElseThrow(() -> new RuntimeException("Entry not found"));
+        Entry entry = entryRepository.findById(entryId).orElseThrow(() -> new RuntimeException("Entry not found"));
 
         // 🔒 Security check
         if (!entry.getUserId().equals(userId)) {
             throw new RuntimeException("Unauthorized");
         }
 
-        repository.delete(entry);
+        entryRepository.delete(entry);
     }
 
     private EntryResponseDTO mapToDTO(Entry entry) {

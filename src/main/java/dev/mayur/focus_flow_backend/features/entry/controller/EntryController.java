@@ -19,38 +19,43 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EntryController {
 
-    private final EntryService service;
+    private final EntryService entryService;
 
     // TEMP: hardcoded userId (replace with auth later)
     private final Long userId = 1L;
 
     @PostMapping
     public ResponseEntity<ApiResponse<EntryResponseDTO>> create(@Valid @RequestBody EntryRequestDTO request) {
-        EntryResponseDTO data = service.createEntry(userId, request);
+        EntryResponseDTO data = entryService.createEntry(userId, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Entry created successfully", data));
     }
 
     @GetMapping("/today")
     public ResponseEntity<ApiResponse<List<EntryResponseDTO>>> getToday() {
-        List<EntryResponseDTO> data = service.getTodayEntries(userId);
+        List<EntryResponseDTO> data = entryService.getTodayEntries(userId);
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Entry fetched successfully", data));
 
     }
 
     @GetMapping("/summary/today")
-    public SummaryResponseDTO getSummary() {
-        return service.getTodaySummary(userId);
+    public ResponseEntity<ApiResponse<SummaryResponseDTO>> getSummary() {
+        SummaryResponseDTO data = entryService.getTodaySummary(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Summary fetched successfully", data));
+
     }
 
     @PutMapping("/{id}")
-    public EntryResponseDTO update(@PathVariable Long id, @Valid @RequestBody EntryRequestDTO request) {
-        return service.updateEntry(userId, id, request);
+    public ResponseEntity<ApiResponse<EntryResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody EntryRequestDTO request) {
+        EntryResponseDTO data = entryService.updateEntry(userId, id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Entry fetched successfully", data));
+
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        service.deleteEntry(userId, id);
-        return "Entry deleted successfully";
+    public ResponseEntity<ApiResponse<Object>> delete(@PathVariable Long id) {
+        entryService.deleteEntry(userId, id);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Entry deleted successfully", null));
+
     }
 }
