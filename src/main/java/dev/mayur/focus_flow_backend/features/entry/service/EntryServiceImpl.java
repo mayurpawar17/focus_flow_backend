@@ -5,6 +5,7 @@ import dev.mayur.focus_flow_backend.features.entry.dto.EntryResponseDTO;
 import dev.mayur.focus_flow_backend.features.entry.entity.Entry;
 import dev.mayur.focus_flow_backend.features.entry.repository.EntryRepository;
 import dev.mayur.focus_flow_backend.features.summary.dto.SummaryResponseDTO;
+import dev.mayur.focus_flow_backend.features.summary.service.AiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class EntryServiceImpl implements EntryService {
 
     private final EntryRepository entryRepository;
+    private final AiService aiService;
 
     @Override
     public EntryResponseDTO createEntry(Long userId, EntryRequestDTO request) {
@@ -47,16 +49,17 @@ public class EntryServiceImpl implements EntryService {
             return SummaryResponseDTO.builder().summary("No activity recorded today.").insight("Start logging tasks to get insights.").totalTasks(0).build();
         }
 
-        // Build text for AI / mock
         StringBuilder input = new StringBuilder("User tasks:\n");
 
         entries.forEach(e -> input.append("- ").append(e.getTitle()).append(" (").append(e.getTimeSpent() == null ? "?" : e.getTimeSpent()).append(" mins)\n"));
 
-        // 🔹 MOCK AI RESPONSE (replace later)
-        String summary = "You were productive today with focus on multiple tasks.";
-        String insight = "Most time spent on " + getTopCategory(entries);
+        String aiResponse = aiService.generateSummary(input.toString());
+        String[] parts = aiResponse.split("Insight:");
 
-        return SummaryResponseDTO.builder().summary(summary).insight(insight).totalTasks(entries.size()).build();
+        String summary = parts[0];
+        String insight = parts.length > 1 ? parts[1] : "No insight available";
+
+        return SummaryResponseDTO.builder().summary(summary).insight(insight.trim()).totalTasks(entries.size()).build();
     }
 
     private List<Entry> getTodayEntriesRaw(Long userId) {
