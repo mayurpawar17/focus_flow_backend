@@ -14,4 +14,8 @@ public interface EntryService {
     List<EntryResponseDTO> getTodayEntries(Long userId);
 
     SummaryResponseDTO getTodaySummary(Long userId);
+
+    EntryResponseDTO updateEntry(Long userId, Long entryId, EntryRequestDTO request);
+
+    void deleteEntry(Long userId, Long entryId);
 }

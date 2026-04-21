@@ -70,6 +70,40 @@ public class EntryServiceImpl implements EntryService {
         return entries.stream().filter(e -> e.getCategory() != null).collect(java.util.stream.Collectors.groupingBy(Entry::getCategory, java.util.stream.Collectors.counting())).entrySet().stream().max(java.util.Map.Entry.comparingByValue()).map(java.util.Map.Entry::getKey).orElse("various tasks");
     }
 
+    @Override
+    public EntryResponseDTO updateEntry(Long userId, Long entryId, EntryRequestDTO request) {
+
+        Entry entry = repository.findById(entryId)
+                .orElseThrow(() -> new RuntimeException("Entry not found"));
+
+        // 🔒 Security check (important)
+        if (!entry.getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        entry.setTitle(request.getTitle());
+        entry.setCategory(request.getCategory());
+        entry.setTimeSpent(request.getTimeSpent());
+
+        Entry updated = repository.save(entry);
+
+        return mapToDTO(updated);
+    }
+
+    @Override
+    public void deleteEntry(Long userId, Long entryId) {
+
+        Entry entry = repository.findById(entryId)
+                .orElseThrow(() -> new RuntimeException("Entry not found"));
+
+        // 🔒 Security check
+        if (!entry.getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        repository.delete(entry);
+    }
+
     private EntryResponseDTO mapToDTO(Entry entry) {
         return EntryResponseDTO.builder().id(entry.getId()).title(entry.getTitle()).category(entry.getCategory()).timeSpent(entry.getTimeSpent()).createdAt(entry.getCreatedAt()).build();
     }
