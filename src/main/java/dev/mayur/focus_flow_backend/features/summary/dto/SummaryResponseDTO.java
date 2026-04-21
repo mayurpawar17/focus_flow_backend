@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class SummaryResponseDTO {
-
     private String summary;
     private String insight;
     private Integer totalTasks;
