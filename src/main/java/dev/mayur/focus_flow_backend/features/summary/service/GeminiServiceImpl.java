@@ -13,11 +13,6 @@ import java.util.Map;
 public class GeminiServiceImpl implements AiService {
 
     private final WebClient webClient;
-
-//    @Value("${gemini.api.key}")
-//    private String apiKey;
-
-
     @Value("${ai.api.key}")
     private String apiKey;
     @Value("${ai.api.url}")
@@ -63,23 +58,51 @@ public class GeminiServiceImpl implements AiService {
         return """
         You are a productivity assistant.
 
-        Analyze the user's tasks and return a concise result.
+        Analyze the user's tasks and produce a concise response.
 
         Rules:
-        - Keep it short and clear
-        - Focus on actual work done, time usage, and patterns
-        - Avoid generic statements
+        - Keep it short and meaningful
+        - Focus on actual work, time usage, and patterns
+        - Avoid generic or repetitive statements
 
         Output format:
-        Summary:
-        <max 2 lines describing main work>
+        First section:
+        Write 1-2 lines describing what the user mainly did.
 
-        Insight:
-        <1 line key observation about focus, time, or category>
+        Second section:
+        Write 1 single line giving a key insight about focus, time usage, or category.
 
-        Do not use symbols like / or bullet points or don' give new line symbol or /n. Use plain text with line breaks only.
+        Formatting rules:
+        - Do NOT include labels like "Summary" or "Insight"
+        - Do NOT use symbols like / or bullet points
+        - Use plain text with a normal line break between the two sections
 
         Tasks:
         """ + input;
     }
+
+//    private String buildPrompt(String input) {
+//        return """
+//        You are a productivity assistant.
+//
+//        Analyze the user's tasks and return a concise result.
+//
+//        Rules:
+//        - Keep it short and clear
+//        - Focus on actual work done, time usage, and patterns
+//        - Avoid generic statements
+//
+//        Output format:
+//        Summary:
+//        <max 2 lines describing main work>
+//
+//        Insight:
+//        <1 line key observation about focus, time, or category>
+//
+//        Do not use symbols like / or bullet points or don' give new line symbol or /n. Use plain text with line breaks only.
+//        Do not include summary or Summary text in summary.
+//
+//        Tasks:
+//        """ + input;
+//    }
 }

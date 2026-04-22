@@ -54,7 +54,8 @@ public class EntryServiceImpl implements EntryService {
         entries.forEach(e -> input.append("- ").append(e.getTitle()).append(" (").append(e.getTimeSpent() == null ? "?" : e.getTimeSpent()).append(" mins)\n"));
 
         String aiResponse = aiService.generateSummary(input.toString());
-        String[] parts = aiResponse.split("Insight:");
+//        String[] parts = aiResponse.split("Insight:");
+        String[] parts = aiResponse.split("\n");
 
         String summary = parts[0];
         String insight = parts.length > 1 ? parts[1] : "No insight available";
