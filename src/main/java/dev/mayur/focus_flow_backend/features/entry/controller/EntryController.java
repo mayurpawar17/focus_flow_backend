@@ -24,6 +24,7 @@ public class EntryController {
     // TEMP: hardcoded userId (replace with auth later)
     private final Long userId = 1L;
 
+    //create new entry
     @PostMapping
     public ResponseEntity<ApiResponse<EntryResponseDTO>> create(@Valid @RequestBody EntryRequestDTO request) {
         EntryResponseDTO data = entryService.createEntry(userId, request);
@@ -31,6 +32,7 @@ public class EntryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Entry created successfully", data));
     }
 
+    //get today entries
     @GetMapping("/today")
     public ResponseEntity<ApiResponse<List<EntryResponseDTO>>> getToday() {
         List<EntryResponseDTO> data = entryService.getTodayEntries(userId);
@@ -38,6 +40,7 @@ public class EntryController {
 
     }
 
+    //get summary of today entries
     @GetMapping("/summary/today")
     public ResponseEntity<ApiResponse<SummaryResponseDTO>> getSummary() {
         SummaryResponseDTO data = entryService.getTodaySummary(userId);
@@ -45,6 +48,7 @@ public class EntryController {
 
     }
 
+    //update
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<EntryResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody EntryRequestDTO request) {
         EntryResponseDTO data = entryService.updateEntry(userId, id, request);
@@ -52,6 +56,7 @@ public class EntryController {
 
     }
 
+    //delete
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> delete(@PathVariable Long id) {
         entryService.deleteEntry(userId, id);
