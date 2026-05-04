@@ -14,6 +14,6 @@ public class health_check_controller {
 
     @GetMapping
     public ResponseEntity<ApiResponse<String>> healthCheck() {
-        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Focus Flow", null));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Focus Flow", "Spring boot is running"));
     }
 }
